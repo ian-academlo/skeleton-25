@@ -3,6 +3,7 @@ const { Users } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const transporter = require("../utils/mailer");
 
 const createUser = async (req, res, next) => {
   try {
@@ -11,6 +12,11 @@ const createUser = async (req, res, next) => {
     const hashed = await bcrypt.hash(password, 10);
     await Users.create({ username, email, password: hashed });
     res.status(201).end();
+    transporter.sendMail({
+      to: email,
+      subject: "Bienvenido a mi app skeleton",
+      html: `<h1> Hola ${username} </h1> <p>Necesitas validar tu correo en el siguiente <a href="#">enlace</a></p> `,
+    });
   } catch (error) {
     next(error);
   }
