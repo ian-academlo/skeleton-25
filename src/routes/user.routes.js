@@ -1,12 +1,13 @@
 const { Router } = require("express");
-const { createUser, loginUser } = require("../controllers/users.controller");
+const {
+  createUser,
+  loginUser,
+  confirmEmail,
+} = require("../controllers/users.controller");
 const {
   loginUserValidator,
   registerUserValidator,
 } = require("../validators/users.validators");
-const authenticate = require("../middlewares/auth.middleware");
-const jwt = require("jsonwebtoken");
-const { Users } = require("../models");
 
 // primero importen lo nativo node
 // de librerias express, express-validator
@@ -22,30 +23,7 @@ router.post("/users", registerUserValidator, createUser); //
 
 router.post("/login", loginUserValidator, loginUser);
 
-router.post("/users/confirm", async (req, res, next) => {
-  try {
-    const { token } = req.body;
-
-    const decoded = jwt.verify(token, "validaremail", {
-      algorithms: "HS512",
-    });
-
-    const user = await Users.findOne({ where: { username: decoded.username } });
-
-    if (decoded) {
-      await Users.update(
-        { validEmail: true },
-        {
-          where: { id: user.id },
-        }
-      );
-    }
-
-    res.status(204).end();
-  } catch (error) {
-    next(error);
-  }
-});
+router.post("/confirm-email", confirmEmail);
 
 module.exports = router;
 

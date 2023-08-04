@@ -10,10 +10,10 @@ const createUser = async (req, res, next) => {
     const { email, password, username } = req.body;
 
     const hashed = await bcrypt.hash(password, 10);
-    await Users.create({ username, email, password: hashed });
+    const user = await Users.create({ username, email, password: hashed });
     res.status(201).end();
 
-    sendWelcomeEmail(email, { username });
+    sendWelcomeEmail(email, { username, email, id: user.id });
   } catch (error) {
     next(error);
   }
@@ -25,10 +25,6 @@ const loginUser = async (req, res, next) => {
 
     const user = await Users.findOne({ where: { email } });
 
-    // si el usuario existe devuelve un objeto
-    // si no existe devuelve null
-    // * truthy, un numero, texto, [], {}, true
-    // ! falsy, "", 0, false, null, undefined
     if (!user) {
       return next({
         status: 400,
@@ -82,9 +78,25 @@ const loginUser = async (req, res, next) => {
   }
 };
 
+const confirmEmail = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+
+    const decoded = jwt.verify(token, process.env.JWT_CONFIRM_SECRET, {
+      algorithms: "HS512",
+    });
+    // { username, email, id }
+    await Users.update({ validEmail: true }, { where: { id: decoded.id } });
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createUser,
   loginUser,
+  confirmEmail,
 };
 
 // protegiendo endpoints -> autenticando peticiones

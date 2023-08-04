@@ -19,6 +19,22 @@ const sendWelcomeEmail = async (email, data) => {
   // obtener la ruta del template
   const templatePath = path.join(__dirname, "../views/welcome/welcome.ejs");
   // obtener la fecha
+  // generar un arreglo con el nombre de los 12 meses en español con js ?
+  const months = [
+    "enero",
+    "febrero",
+    "marzo",
+    "abril",
+    "mayo",
+    "junio",
+    "julio",
+    "agosto",
+    "septiembre",
+    "octubre",
+    "noviembre",
+    "diciembre",
+  ];
+
   const date = new Date();
   const day = date.getDate();
   const year = date.getFullYear();
@@ -39,10 +55,6 @@ const sendWelcomeEmail = async (email, data) => {
       path: path.join(__dirname, basePath, "contacts_no-bg.gif"),
       cid: "contacts",
     },
-    {
-      filename: "documento.pdf",
-      path: path.join(__dirname, "../views/welcome/documento.pdf"),
-    },
   ];
 
   // genrar un token
@@ -53,7 +65,7 @@ const sendWelcomeEmail = async (email, data) => {
 
   const template = await ejs.renderFile(templatePath, {
     ...data,
-    date: `${day} ${month} ${year}`,
+    date: `${day} ${months[month]} ${year}`, // 3 agosto 2023
     token,
   });
   sendMail(email, "Bienvenido a mi app", template, attachments);
