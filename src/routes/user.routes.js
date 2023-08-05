@@ -60,3 +60,17 @@ module.exports = router;
 // 2 round
 
 // 04c56e389764dfg43034kgl67435 --> hashear
+
+/*
+
+  user --> 0
+  colaborador -> 1
+  socio -> 2
+  admin -> 3
+  propietario -> 4
+
+  role minimo es socio   valor del role >= 2
+
+
+  socio, admin, propietario
+*/
