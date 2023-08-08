@@ -11,11 +11,12 @@ module.exports = {
     logging: false,
   },
   test: {
-    username: "root",
-    password: null,
-    database: "database_test",
+    username: "iannacus",
+    password: "root",
+    database: "chat_db",
     host: "127.0.0.1",
-    dialect: "mysql",
+    dialect: "postgres",
+    logging: false,
   },
   production: {
     username: process.env.DB_USER,
